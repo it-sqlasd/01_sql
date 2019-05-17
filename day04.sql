@@ -1,3 +1,179 @@
+-- day04 : 실습 4일차 
+2 
+ 
+3 -- (6) 연산자 2. 비교연산자 
+4 --     비교연산자는 SELECT 절에 사용할 수 없음 
+5 --     WHERE, HAVING 절에만 사용할 수 있음. 
+6 
+ 
+7 -- 22) 급여가 2000이 넘는 직원의 사번, 이름, 급여를 조회 
+8 SELECT e.empno 사번 
+9      , e.ename 이름 
+10      , e.sal 급여  
+11   FROM emp e 
+12  WHERE e.sal > 2000   
+13 ;   
+14 /* 
+15 사번,   이름,   급여 
+16 ---------------------- 
+17 7566	JONES	2975 
+18 7698	BLAKE	2850 
+19 7782	CLARK	2450 
+20 7839	KING	5000 
+21 7902	FORD	3000 
+22 */ 
+23 
+ 
+24 
+ 
+25 -- 급여가 1000 이상인 직원의 사번, 이름, 급여를 조회 
+26 SELECT e.empno 
+27      , e.ename 
+28      , e.sal 
+29   FROM emp e 
+30  WHERE e.sal >= 1000   
+31 ;   
+32 
+ 
+33 /* 
+34 EMPNO,  ENAME,   SAL 
+35 --------------------- 
+36 7499	ALLEN	1600 
+37 7521	WARD	1250 
+38 7566	JONES	2975 
+39 7654	MARTIN	1250 
+40 7698	BLAKE	2850 
+41 7782	CLARK	2450 
+42 7839	KING	5000 
+43 7844	TURNER	1500 
+44 7902	FORD	3000 
+45 7934	MILLER	1300 
+46 */ 
+47 
+ 
+48 -- 급여가 1000 이상이며 2000보다 작은 직원의  
+49 -- 사번, 이름, 급여를 조회 
+50 SELECT e.empno 
+51      , e.ename 
+52      , e.sal 
+53   FROM emp e 
+54  WHERE e.sal >= 1000   
+55    AND e.sal < 2000 
+56 ;   
+57 /* 
+58 EMPNO,  ENAME,  SAL 
+59 -------------------- 
+60 7499	ALLEN	1600 
+61 7521	WARD	1250 
+62 7654	MARTIN	1250 
+63 7844	TURNER	1500 
+64 7934	MILLER	1300 
+65 */ 
+66 
+ 
+67 --  comm(수당) 값이 0보다 큰 직원의  
+68 --  사번, 이름, 급여, 수당을 조회 
+69 SELECT e.empno 
+70      , e.ename 
+71      , e.sal 
+72      , e.comm 
+73   FROM emp e 
+74  WHERE e.comm > 0   
+75 ;   
+76 /* 
+77 EMPNO,  ENAME,  SAL,   COMM 
+78 ---------------------------- 
+79 7499	ALLEN	1600	300 
+80 7521	WARD	1250	500 
+81 7654	MARTIN	1250	1400 
+82 */ 
+83 
+ 
+84 /* 
+85 ==> **위의 comm > 0 조건의 실행 결과에서 알 수 있는 것 
+86 comm 컬럼의 값이 (null) 인 사람들의 행은 
+87 처음부터 비교대상에 들지 않음에 주의해야 한다. 
+88 (null) 값은 비교연산자, 산술연산자로 연산할 수 없는 값이다. 
+89 
+ 
+90 단, 정렬에서는 null 값은 가장 큰 값으로 취급한다. 
+91 
+ 
+92 */ 
+93 
+ 
+94 -- 23) null 데이터 관련 문제 
+95 --     SALESMAN(영업사원) 직무를 가진 사람의 실제 수령금을 계산하여 
+96 --     사번, 이름, 직무, 실 수령금을 조회 
+97 SELECT e.empno 
+98      , e.ename 
+99      , e.job 
+100      , e.sal 
+101      , e.comm 
+102      , e.sal + e.comm "실 수령금" 
+103   FROM emp e 
+104 ; 
+105 -- ==> NULL 데이터는 산술연산자로 연산 불가능한 값 
+106 SELECT e.empno 
+107      , e.ename 
+108      , e.job 
+109      , e.sal 
+110      , e.comm 
+111      , e.sal + e.comm "실 수령금" 
+112   FROM emp e 
+113  WHERE e.job = 'SALESMAN' 
+114 ; 
+115 /* 
+116 EMPNO,  ENAME,  JOB,        SAL,    COMM,   실 수령금 
+117 ----------------------------------------------------- 
+118 7499	ALLEN	SALESMAN	1600	300	    1900 
+119 7521	WARD	SALESMAN	1250	500	    1750 
+120 7654	MARTIN	SALESMAN	1250	1400	2650 
+121 7844	TURNER	SALESMAN	1500	0	    1500 
+122 */ 
+123 
+ 
+124 -- (6) 연산자 3. 논리연산자 
+125 --- NOT 연산자 
+126 
+ 
+127 -- 24) 급여가 2000 보다 적지 않은 직원의 
+128 --     사번, 이름, 급여를 조회 
+129 SELECT e.empno 
+130      , e.ename 
+131      , e.sal 
+132   FROM emp e 
+133  WHERE NOT e.sal < 2000   
+134 ; 
+135 
+ 
+136 -- 같은 결과를 내는 다른 구문 
+137 -- NOT 을 사용하지 않고 다른 비교연산자 사용 
+138 SELECT e.empno 
+139      , e.ename 
+140      , e.sal 
+141   FROM emp e 
+142  WHERE e.sal >= 2000   
+143 ; 
+144 
+ 
+145 /* 
+146 EMPNO,  ENAME,  SAL 
+147 --------------------- 
+148 7566	JONES	2975 
+149 7698	BLAKE	2850 
+150 7782	CLARK	2450 
+151 7839	KING	5000 
+152 7902	FORD	3000 
+153 */ 
+154 
+ 
+155 -- (6) 연산자 4. SQL 연산자 
+156 --- IN 연산자 : 비교하고자 하는 기준 값이 
+157 --              제시된 목록에 존재하면 참으로 판단 
+
+-- 25) 급여가 800, 3000, 5000 중에 하나인 직원의 
+--     사번, 이름, 급여를 조회 
 SELECT e.empno
      , e.ename
      , e.sal
@@ -471,3 +647,96 @@ ORA-01790: 대응하는 식과 같은 데이터 유형이어야 합니다
 *Action:
 458행, 8열에서 오류 발생
 */
+
+-- 집합 연산자는 서로 다른 테이블의 조회 결과도 
+-- 연산이 가능하다. 
+-- 첫번쨰 쿼리 : emp 테이블에서 조회 
+SELECT e.empno -- 숫자 
+     , e.ename -- 문자
+     , e.job   -- 문자
+  FROM emp e
+  
+-- 두번쨰 쿼리 : dept 테이블에서 조회 
+SELECT d.deptno
+     , d.dname
+     , d.loc
+  FROM dept d
+;
+
+-- 서로 다른 테이블에서 중복제거 후 출력 합집합 -
+-- UNION
+SELECT e.empno -- 숫자 
+     , e.ename -- 문자
+     , e.job   -- 문자
+  FROM emp e
+ UNION
+SELECT d.deptno -- 숫자
+     , d.dname --  문자
+     , d.loc   --  문자
+  FROM dept d
+;
+/* 합집합의 컬럼명은 첫번쨰 쿼리의 컬럼 이름이 선택됨 
+EMPNO,  ENAME,      JOB
+----------------------------
+10  	ACCOUNTING	NEW YORK
+20  	RESEARCH	DALLAS
+30    	SALES	    CHICAGO
+40	    OPERATIONS	BOSTON
+7369	SMITH	    CLERK
+7499	ALLEN   	SALESMAN
+7521	WARD    	SALESMAN
+7566	JONES   	MANAGER
+7654	MARTIN  	SALESMAN
+7698	BLAKE   	MANAGER
+7782	CLARK    	MANAGER
+7839	KING    	PRESIDENT
+7844	TURNER  	SALESMAN
+7900	JAMES    	CLERK
+7902	FORD	    ANALYST
+7934	MILLER	    CLERK
+8888	J%JAMES  	CLERK
+9999	J_JAMES 	CLERK
+*/
+SELECT e.empno -- 숫자 
+     , e.ename -- 문자
+     , e.job   -- 문자
+  FROM emp e
+ MINUS
+SELECT d.deptno -- 숫자
+     , d.dname --  문자
+     , d.loc   --  문자
+  FROM dept d
+;
+/*
+EMPNO,  ENAME,      JOB
+----------------------------
+7369	SMITH	    CLERK
+7499	ALLEN   	SALESMAN
+7521	WARD    	SALESMAN
+7566	JONES   	MANAGER
+7654	MARTIN  	SALESMAN
+7698	BLAKE   	MANAGER
+7782	CLARK    	MANAGER
+7839	KING    	PRESIDENT
+7844	TURNER  	SALESMAN
+7900	JAMES    	CLERK
+7902	FORD	    ANALYST
+7934	MILLER	    CLERK
+8888	J%JAMES  	CLERK
+9999	J_JAMES 	CLERK
+*/
+
+-- (3) INTERSECT (교집합)
+SELECT e.empno -- 숫자 
+     , e.ename -- 문자
+     , e.job   -- 문자
+  FROM emp e
+ MINUS
+SELECT d.deptno -- 숫자
+     , d.dname --  문자
+     , d.loc   --  문자
+  FROM dept d
+;
+--> 인출된 모든 행:0  ==> 조회성공, 결과가 없을 뿐 
+-- 서로 다른 테이블의 데이터 조회 결과들을 가진 쿼리이므로 
+-- 중복된 데이터가 없으므로 교집합 결과가 1행도 없음.
