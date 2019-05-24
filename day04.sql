@@ -279,6 +279,7 @@ SELECT e.empno
   FROM emp e
  WHERE e.ename LIKE 'J\_%' ESCAPE '\'
 ;
+
 -- ==> 위처럼 LIKE 조건을 작성하면 J뒤에 적어도 1글자가 있는 
 --     이름을 가진 직원이 모두 검색됨. 원하는 결과가 아니다
 --     패턴 인식 문자를 조회하려면 ESCAPE 를 사용해야 한다.
@@ -455,6 +456,7 @@ SELECT e.empno
                            FROM emp e
                            WHERE e.sal > 10000)
 ;
+
 /*
 시스템 메시지
 급여가 10000이 넘는 직원이 존재하지않음
