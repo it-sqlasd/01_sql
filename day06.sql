@@ -1,4 +1,84 @@
---day 06
+1 -- day06 
+2 ----- 2) 문자함수 
+3 -------- 1. INITCAP(str) : str 의 첫 글자를 대문자화(영문) 
+4 SELECT initcap('the watch') -- The Watch 
+5   FROM dual 
+6 ; 
+7 SELECT initcap('안녕하세요. 하하하') -- 안녕하세요. 하하하 
+8   FROM dual 
+9 ; 
+10 
+ 
+11 -------- 2. LOWER(str) : str의 모든 글자를 소문자화(영문) 
+12 SELECT lower('MR. SCOTT MCMILLAN') "소문자로 변경" 
+13   FROM dual 
+14 ; 
+15 -- mr. scott mcmillan 
+16 
+ 
+17 -------- 3. UPPER(str) : str의 모든 글자를 대문자화(영문) 
+18 SELECT upper('lee') "성을 대문자로 변경" 
+19   FROM dual 
+20 ;   
+21 
+ 
+22 SELECT upper('sql is cooooooooooooooool~!!!') "재밌어요!" 
+23   FROM dual 
+24 ;  
+25 
+ 
+26 -- smith 를 찾는데 입력이 소문자로 된 경우에 
+27 -- SMITH 와 다른 글자로 인식되므로 찾을 수 없다. 
+28 SELECT e.empno 
+29      , e.ename 
+30   FROM emp e 
+31  WHERE e.ename = 'smith'   
+32 ;   
+33 -- 인출된 모든 행:0 
+34 SELECT e.empno 
+35      , e.ename 
+36   FROM emp e 
+37  WHERE e.ename = 'SMITH'   
+38 ; 
+39 -- ename 과 비교하는 값이 대문자 이므로 정보가 조회 됨. 
+40 SELECT e.empno 
+41      , e.ename 
+42   FROM emp e 
+43  WHERE e.ename = upper('smith') 
+44 ;   
+45 /* 
+46 EMPNO,  ENAME 
+47 ---------------- 
+48 7369	SMITH 
+49 */ 
+50 
+ 
+51 -------- 4. LENGTH(str), LENGTHB(str) :  
+52 --         str의 글자길이, 글자의 byte 를 계산하여 숫자로 출력 
+53 SELECT length('hello, sql') as "글자 길이" 
+54   FROM dual 
+55 ;   
+56 --결과: 10 ==> 특수기호, 공백도 글자 길이로 계산 
+57 SELECT 'hello, sql의 글자 길이는 ' || length('hello, sql')  
+58                                    || '입니다.' "글자 길이" 
+59   FROM dual 
+60 ; 
+61 /* 
+62 글자 길이 
+63 ---------------------------------- 
+64 hello, sql의 글자 길이는 10입니다. 
+65 */ 
+66 
+ 
+67 ---- oracle에서 한글을 3byte 로 계산 
+68 SELECT lengthb('hello, sql') "글자 byte" 
+69   FROM dual 
+70 ;   
+71 -- 결과 : 10 ==> 영문자는 1byte 할당 
+72 SELECT lengthb('오라클') "글자 byte" 
+73   FROM dual 
+74 ;   
+75 -- 결과 : 9 ==> 한글은 3byte 할당 
 
 ------------5. CONCAT (str1, st2) : str1과 str2를 문자열 집합 
 --                                  || 연산자와 동일한 결과 
