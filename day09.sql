@@ -384,3 +384,113 @@ ORA-00904: "급여평균": 부적합한 식별자
 6.SELECT    절에 명시된 컬럼, 식(함수 식)만 출력
 7.ORDER BY  가 있다면 정렬 조건에 맞추어 최종 정렬하여 결과 출력
 */
+
+-- 수업중 실습 
+
+ 
+ -- 1. 매니저별, 부하직원의 수를 구하고, 많은 순으로 정렬 
+ --   : mgr 컬럼이 그룹화 기준 컬럼 
+ SELECT e.deptno "부서번호"
+      , COUNT(e.deptno) "부하직원"
+   FROM emp e
+  GROUP BY e.deptno
+ ORDER BY "부하직원"
+;
+
+-- 2.1 부서별 인원을 구하고, 인원수 많은 순으로 정렬 
+ --    : deptno 컬럼이 그룹화 기준 컬럼 540
+SELECT e.deptno "부서번호"
+      , COUNT(e.deptno) "부하직원"
+   FROM emp e
+  GROUP BY e.deptno
+ ORDER BY "부하직원";
+
+ -- 2.2 부서 배치 미배정 인원 처리 
+ SELECT e.deptno "부서 배치 미배정" 
+   FROM emp e
+  WHERE e.deptno is null 
+;
+ 
+ -- 3.1 직무별 급여 평균 구하고, 급여평균 높은 순으로 정렬 
+ --   : job 이 그룹화 기준 컬럼 
+ SELECT e.job "직무별"
+      , AVG(e.sal) "급여평균"
+   FROM emp e
+  GROUP BY e.job, e.sal
+  ORDER BY "급여평균" DESC   
+ ;
+ 
+-- 3.2 job 이 null 인 데이터 처리 
+ SELECT NVL(TO_CHAR(e.job), '부서 미배정') "직무별"
+      , AVG(e.sal) "급여평균"
+   FROM emp e
+  GROUP BY e.job, e.sal
+  ORDER BY "급여평균" DESC   
+ ;
+
+ 
+
+ 
+-- 4. 직무별 급여 총합 구하고, 총합 높은 순으로 정렬 
+--   : job 이 그룹화 기준 컬럼 
+ SELECT e.job
+      , SUM(e.sal) "급여 합"
+   FROM emp e
+  GROUP BY e.job, e.sal
+  ORDER BY "급여 합" DESC   
+ ;
+
+
+-- 5. 급여의 앞단위가 1000미만, 1000, 2000, 3000, 5000 별로 인원수를 구하시오 
+--    급여 단위 오름차순으로 정렬 
+ SELECT TO_CHAR(e.hiredate, 'YY') "입사년도" 
+      , COUNT(*) "인원"
+   FROM emp e
+ GROUP BY TO_CHAR(e.hiredate, 'YY')
+;
+
+ 
+
+ 
+-- 6. 직무별 급여 합의 단위를 구하고, 급여 합의 단위가 큰 순으로 정렬 
+ SELECT e.job
+      , TO_CHAR(SUM(e.sal), '$9,999') "급여 합"
+   FROM emp e
+  GROUP BY e.job, e.sal
+  ORDER BY "급여 합" DESC   
+ ;
+
+-- 7. 직무별 급여 평균이 2000이하인 경우를 구하고 평균이 높은 순으로 정렬 
+ SELECT e.job
+      , TO_CHAR(SUM(e.sal), '$9,999') "급여 합"
+      , avg(e.sal) "평균"
+   FROM emp e
+ HAVING AVG(e.sal) < 2000
+  GROUP BY e.job, e.sal
+  ORDER BY "평균" DESC   
+ ;
+ -- 8. 년도별 입사 인원을 구하시오 
+SELECT sum(count(e.hiredate)) "81년도"
+  FROM emp e
+ GROUP BY e.hiredate
+ HAVING e.hiredate LIKE '81%'
+    
+ ;
+ 
+ 
+ 
+ SELECT e.hiredate 
+   FROM emp e
+;
+
+
+
+ SELECT TO_CHAR(e.hiredate, 'YY')  
+   FROM emp e
+;
+
+ SELECT TO_CHAR(e.hiredate, 'YY') "입사년도" 
+      , COUNT(*) "인원"
+   FROM emp e
+ GROUP BY TO_CHAR(e.hiredate, 'YY')
+;
