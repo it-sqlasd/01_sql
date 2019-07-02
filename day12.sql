@@ -131,7 +131,6 @@ CREATE TABLE member
  ,phone         VARCHAR2(4)   -- NULL 허용하려면 제약조건을 안쓰면 됩니다.
  ,reg_date      DATE          DEFAULT sysdate
  ,address       VARCHAR2(30)   
- ,like_number   NUMBER
  ,major         VARCHAR2(50)
  ,birth_month   NUMBER(2)
  ,gender        VARCHAR2(1)   CHECK (gender IN ('F', 'M'))
@@ -516,3 +515,157 @@ CREATE TABLE SUB_TABLE3
 
 */
 
+--4. 테이블 정의 후 테이블 수정 (ALTER TABLE)로 제약 조건 추가 
+
+DROP TABLE MAIN_TABLE4;
+-- 1) MAIN_TABLE4 정의 구문
+
+CREATE TABLE MAIN_TABLE4
+(   ID           VARCHAR2(10)       
+,   NICKNAME     VARCHAR2(30)       
+,   REG_DATE     DATE                DEFAULT SYSDATE
+,   GENDER       VARCHAR2(1)        
+,   MESSAGE      VARCHAR2(300)
+);
+--Table MAIN_TALBE4이(가) 생성되었습니다.
+
+--2) 제약조건 추가 가문
+ALTER TABLE MAIN_TABLE4 ADD
+(   CONSTRAINT   PK_MAIN4            PRIMARY KEY(ID)
+,   CONSTRAINT   UQ_NICKNAME4        UNIQUE (NICKNAME)    
+,   CONSTRAINT   CK_GENDER4          CHECK (GENDER IN ('M', 'F'))
+);
+
+--Table MAIN_TABLE4이(가) 변경되었습니다.
+
+--SUB_TABLE4 가 존재하면 삭제 
+DROP TABLE SUB_TABLE;
+
+CREATE TABLE SUB_TABLE4
+(  ID         VARCHAR2(10)      
+,  HOBBY      VARCHAR2(200)
+,  BIRTH_YEAR NUMBER(4)
+);
+
+--Table SUB_TABLE4이(가) 생성되었습니다.
+
+--4) SUB_TABLE4 제약조건 추가 
+
+ALTER TABLE SUB_TABLE4 ADD
+( CONSTRAINT FK_SUB4 FOREIGN KEY(ID) REFERENCES MAIN_TABLE4 (ID)
+, CONSTRAINT PK_SUB4 PRIMARY KEY (ID, BIRTH_YEAR)
+);
+
+--Table SUB_TABLE4이(가) 변경되었습니다.
+
+--시스템 카탈로그 : user_constraints 에서 
+--생성된 제약조건 확인
+
+SELECT c.table_name
+     ,  c.constraint_name
+     , c.constraint_type
+  FROM user_constraints c
+ WHERE c.table_name LIKE 'MAIN_TABLE%'
+    OR c.table_name LIKE 'SUB_TABLE%'
+ ORDER BY c.table_name
+;
+
+/*
+TABLE_NAME, CONSTRAINT_NAME, CONSTRAINT_TYPE
+---------------------------------------------
+MAIN_TABLE1	SYS_C007517	    C (=CHECK)
+MAIN_TABLE1	SYS_C007518	    P (=PRIMARY KEY)
+MAIN_TABLE1	SYS_C007519 	U (=UNIQUE)
+MAIN_TABLE2	UQ_NICKNAME	    U
+MAIN_TABLE2	CK_GENDER	    C
+MAIN_TABLE2	PK_MAIN	        P
+MAIN_TABLE3	CK_GENDER3	    C
+MAIN_TABLE3	UQ_NICKNAME3	U
+MAIN_TABLE3	PK_MAIN3	    P
+MAIN_TABLE4	CK_GENDER4	    C
+MAIN_TABLE4	PK_MAIN4	    P
+MAIN_TABLE4	UQ_NICKNAME4	U
+SUB_TABLE1	SYS_C007520 	R (=REFERENCES=FOREIGN KEY)
+SUB_TABLE2	FK_SUB	        R
+SUB_TABLE3	FK_SUB3     	R
+SUB_TABLE3	PK_SUB3     	P
+SUB_TABLE4	FK_SUB4	        R
+SUB_TABLE4	PK_SUB4	        P
+*/
+
+- -테이블 일므의 변경 : RENAME
+-- 예) MARCH_MEMBER ==> MEMBER_OF_MARCH
+RENAME MARCH_MEMBER TO MEMBER_OF_MARCH;
+
+--테이블 이름이 변경되었습니다.
+
+RENAME MEMBER_OF_MARCH TO MARCH_MEMBER;
+
+--테이블 이름이 변경되었습니다.
+
+-- 테이블 삭제 : DROP 
+-- 두 테이블 사이에 REFERECES (FOREIGN KEY) 관계가 있을 떄의 삭제 
+
+-- 예) MAIN_TALBE1 의 경우 SUB_TABLE1 에 의해 ID 컬럼이 참조되고 있는 상태 
+
+-- 1) MAIN_TABLE1 삭제 구문 
+DROP TABLE MAIN_TABLE1;
+/*
+오류 보고 -
+ORA-02449: 외래 키에 의해 참조되는 고유/기본 키가 테이블에 있습니다
+*/
+
+--SUB_TABLE1 이 MAIN_TABLE1 의 ID 컬럼을 참조하고 있기 떄문에 
+--테이블 삭제시 순서가 필요하다 
+
+--2) SUB_TALBE1 먼저 삭제 후 MAIN_TALBE1 삭제 
+DROP TABLE SUB_TABLE1;
+
+DROP TABLE MAIN_TABLE1;
+
+--3) 참조 관계에 상관없이 관계를 끊으면서 삭제 
+
+/*
+MAIN_TABLE2	CK_GENDER	C
+MAIN_TABLE2	PK_MAIN	P
+MAIN_TABLE2	UQ_NICKNAME	U
+SUB_TABLE2	FK_SUB	R
+*/
+
+DROP TABLE MAIN_TABLE2 CASCADE CONSTRAINT;
+
+--Table MAIN_TABLE2이(가) 삭제되었습니다.
+
+SELECT c.table_name
+     ,  c.constraint_name
+     , c.constraint_type
+  FROM user_constraints c
+ WHERE c.table_name LIKE 'MAIN_TABLE2%'
+    OR c.table_name LIKE 'SUB_TABLE2%'
+ ORDER BY c.table_name
+;
+-- CASCADE 옵션으로 테이블 삭제하면
+-- 위의 쿼리 결과 ㅣ 인출된 모든 행이 0이 된다 
+-- 즉,제약조건을 모두 삭제하며 테이블을 DROP함
+-- 특히 이결과에서 SUB_TABLE2 에 있던 R 제약조건이 같이 사라진다.
+
+--SUB_TABLE3 을 DROP 한 뒤 , USER_CONSTRAINTS 에서 관련행이 사려짐 
+DROP TABLE SUB_TABLE3;
+
+SELECT c.table_name
+     ,  c.constraint_name
+     , c.constraint_type
+  FROM user_constraints c
+ WHERE c.table_name LIKE 'MAIN_TABLE3%'
+    OR c.table_name LIKE 'SUB_TABLE3%'
+ ORDER BY c.table_name
+;
+
+/*
+MAIN_TABLE3	CK_GENDER3	    C
+MAIN_TABLE3	UQ_NICKNAME3	U
+MAIN_TABLE3	PK_MAIN3	    P
+*/
+
+--SUB_TABLE3 을 DROP 해도 MAIN_TABLE3 의 제약조건에는 
+--영향을 미치지않는다.
